@@ -2,7 +2,10 @@
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -20,28 +23,54 @@ namespace Nishant_Kumar_Oritso_Test.Controllers
 
         public ActionResult Index()
         {
-
-        var d=     _man.GetAll();
             return View();
         }
-        public ActionResult GetTaskList()
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult SaveTask(TaskViewModel model)
         {
-            // Use your Manager to get the list
-            var list = _man.GetAll();
-            return PartialView("_TaskList", list);
+            try
+            {
+                int userId = 1; 
+
+                return _man.SaveTask(model, userId);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+                });
+            }
         }
-        //public ActionResult About()
-        //{
-        //    ViewBag.Message = "Your application description page.";
 
-        //    return View();
-        //}
 
-        //public ActionResult Contact()
-        //{
-        //    ViewBag.Message = "Your contact page.";
+        [HttpGet]
+        public PartialViewResult LoadTaskList( string searchText, string status,DateTime? fromDate, DateTime? toDate)
+        {
+            searchText = searchText == "" ? null : searchText;
+            status = status == "" ? null : status;
+            var data = _man.GetAllOrSearchTask(searchText, status, fromDate, toDate);
+            return PartialView("_TaskTable", data);
+        }
 
-        //    return View();
-        //}
+        [HttpPost]
+        public JsonResult DeleteTask(int id)
+        {
+            try
+            {
+                return _man.DeleteTask(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+                });
+            }
+        }
     }
 }
