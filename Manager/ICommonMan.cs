@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Manager
 {
-    internal interface ICommonMan
+    public interface ICommonMan
     {
     }
 }
