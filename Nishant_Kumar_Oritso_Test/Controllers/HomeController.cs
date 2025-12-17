@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Manager;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,11 +10,26 @@ namespace Nishant_Kumar_Oritso_Test.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+
+        private readonly ICommonMan _man;   
+
+        public HomeController(ICommonMan man)
         {
-            return View();
+            _man = man;
         }
 
+        public ActionResult Index()
+        {
+
+        var d=     _man.GetAll();
+            return View();
+        }
+        public ActionResult GetTaskList()
+        {
+            // Use your Manager to get the list
+            var list = _man.GetAll();
+            return PartialView("_TaskList", list);
+        }
         //public ActionResult About()
         //{
         //    ViewBag.Message = "Your application description page.";

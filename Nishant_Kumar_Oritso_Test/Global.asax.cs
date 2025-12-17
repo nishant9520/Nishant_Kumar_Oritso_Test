@@ -16,6 +16,8 @@ namespace Nishant_Kumar_Oritso_Test
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+           // UnityConfig.RegisterComponents();
         }
     }
 }

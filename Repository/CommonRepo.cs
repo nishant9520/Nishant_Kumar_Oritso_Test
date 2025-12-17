@@ -8,5 +8,6 @@ namespace Repository
 {
     public class CommonRepo:ICommonRepo
     {
+        public String GetAll() { return "String"; }
     }
 }

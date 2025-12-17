@@ -8,5 +8,6 @@ namespace Repository
 {
     public interface ICommonRepo
     {
+        string GetAll();
     }
 }
