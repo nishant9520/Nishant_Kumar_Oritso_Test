@@ -56,10 +56,6 @@ namespace Nishant_Kumar_Oritso_Test.Controllers
         }
 
 
-        public ActionResult Logout()
-        {
-            Session.Clear();
-            return RedirectToAction("Login");
-        }
+      
     }
 }
