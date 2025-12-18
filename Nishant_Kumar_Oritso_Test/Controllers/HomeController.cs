@@ -23,6 +23,8 @@ namespace Nishant_Kumar_Oritso_Test.Controllers
 
         public ActionResult Index()
         {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Login", "Auth");
             return View();
         }
 
@@ -32,9 +34,8 @@ namespace Nishant_Kumar_Oritso_Test.Controllers
         {
             try
             {
-                int userId = 1; 
 
-                return _man.SaveTask(model, userId);
+                return _man.SaveTask(model, Convert.ToInt32(Session["UserId"].ToString()));
             }
             catch (Exception ex)
             {

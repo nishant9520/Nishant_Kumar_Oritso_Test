@@ -138,6 +138,26 @@ namespace Manager
             }
         }
 
+        public List<LoginUserDetails> UserLogin(LoginViewModel model)
+        {
+            DataTable dt = _repo.UserLogin(model);
+
+            List<LoginUserDetails> list = new List<LoginUserDetails>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new LoginUserDetails
+                {
+                    Id = Convert.ToInt32(row["UserId"]),
+                    UserName = row["UserName"].ToString(),
+                    Message = row["Message"].ToString()
+                });
+            }
+
+            return list;
+        }
+
+
 
     }
 }

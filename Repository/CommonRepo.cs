@@ -38,6 +38,26 @@ namespace Repository
 
         }
 
+         public DataTable UserLogin(LoginViewModel model)
+        {
+            try
+            {
+                DbManager dbManager = new DbManager();
+
+                List<SqlParameter> parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Email", model.Email),
+                    new SqlParameter("@Password", model.Password)
+                };
+                return   dbManager.ExecuteSP_DataTable("SP_User_Login", parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
 
         public DataTable GetAllOrSearchTask( string searchText, string status, DateTime? fromDate,DateTime? toDate)
         {

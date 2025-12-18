@@ -11,7 +11,7 @@ namespace Repository
     public interface ICommonRepo
     {
         DataTable SaveTask(TaskViewModel model, int userId);
-      
+        DataTable UserLogin(LoginViewModel model);
 
         DataTable GetAllOrSearchTask(string searchText, string status, DateTime? fromDate, DateTime? toDate);
 

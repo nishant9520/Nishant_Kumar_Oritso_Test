@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [TaskManagementDB]    Script Date: 17-12-2025 22:39:07 ******/
+/****** Object:  Database [TaskManagementDB]    Script Date: 18-12-2025 08:10:51 ******/
 CREATE DATABASE [TaskManagementDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -80,7 +80,7 @@ ALTER DATABASE [TaskManagementDB] SET QUERY_STORE = OFF
 GO
 USE [TaskManagementDB]
 GO
-/****** Object:  Table [dbo].[Tasks]    Script Date: 17-12-2025 22:39:08 ******/
+/****** Object:  Table [dbo].[Tasks]    Script Date: 18-12-2025 08:10:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -102,7 +102,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 17-12-2025 22:39:08 ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 18-12-2025 08:10:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -111,8 +111,9 @@ CREATE TABLE [dbo].[Users](
 	[UserId] [int] IDENTITY(1,1) NOT NULL,
 	[UserName] [nvarchar](100) NOT NULL,
 	[Email] [nvarchar](150) NULL,
+	[Password] [nvarchar](50) NULL,
 	[CreatedOn] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK__Users__1788CC4CC2D92ABD] PRIMARY KEY CLUSTERED 
 (
 	[UserId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
@@ -120,9 +121,45 @@ PRIMARY KEY CLUSTERED
 GO
 ALTER TABLE [dbo].[Tasks] ADD  DEFAULT (getdate()) FOR [CreatedOn]
 GO
-ALTER TABLE [dbo].[Users] ADD  DEFAULT (getdate()) FOR [CreatedOn]
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF__Users__CreatedOn__24927208]  DEFAULT (getdate()) FOR [CreatedOn]
 GO
-/****** Object:  StoredProcedure [dbo].[Task_Delete]    Script Date: 17-12-2025 22:39:08 ******/
+/****** Object:  StoredProcedure [dbo].[SP_User_Login]    Script Date: 18-12-2025 08:10:51 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SP_User_Login]
+    @Email NVARCHAR(100),
+    @Password NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT 1 
+        FROM Users 
+        WHERE Email = @Email 
+          AND Password = @Password
+    )
+    BEGIN
+        SELECT 
+            UserId,
+            UserName,
+            'Login Successful' AS Message
+        FROM Users
+        WHERE Email = @Email 
+          AND Password = @Password;
+    END
+    ELSE
+    BEGIN
+        SELECT 
+            0 AS UserId,
+            '' AS UserName,
+            'Invalid Email or Password' AS Message;
+    END
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Task_Delete]    Script Date: 18-12-2025 08:10:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -156,17 +193,17 @@ BEGIN
     END CATCH
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[Task_GetAllOrSearch]    Script Date: 17-12-2025 22:39:08 ******/
+/****** Object:  StoredProcedure [dbo].[Task_GetAllOrSearch]    Script Date: 18-12-2025 08:10:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[Task_GetAllOrSearch]
 (
-    @SearchText NVARCHAR(100) = NULL,   
-    @Status NVARCHAR(50) = NULL,        
-    @FromDate DATE = NULL,             
-    @ToDate DATE = NULL                
+    @SearchText NVARCHAR(100) = NULL,   -- Task Title / Description
+    @Status NVARCHAR(50) = NULL,        -- Pending / InProgress / Completed
+    @FromDate DATE = NULL,              -- Due date from
+    @ToDate DATE = NULL                 -- Due date to
 )
 AS
 BEGIN
@@ -197,7 +234,7 @@ BEGIN
     ORDER BY T.CreatedOn DESC;
 END;
 GO
-/****** Object:  StoredProcedure [dbo].[Task_Save]    Script Date: 17-12-2025 22:39:08 ******/
+/****** Object:  StoredProcedure [dbo].[Task_Save]    Script Date: 18-12-2025 08:10:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON

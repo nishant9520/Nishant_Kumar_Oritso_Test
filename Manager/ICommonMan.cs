@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -16,5 +17,9 @@ namespace Manager
         List<TaskViewModel> GetAllOrSearchTask(string searchText, string status, DateTime? fromDate, DateTime? toDate);
 
         JsonResult DeleteTask(int id);
+
+
+        List<LoginUserDetails> UserLogin(LoginViewModel model);
+
     }
 }
